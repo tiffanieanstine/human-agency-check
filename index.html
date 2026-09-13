@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Assess whether an AI-enabled workflow preserves human judgment, agency, and accountability.">
+  <title>Human Agency Check</title>
+  <style>
+    :root {
+      --ink: #182526;
+      --muted: #536667;
+      --paper: #fbfaf7;
+      --card: #ffffff;
+      --line: #dbe3df;
+      --teal: #087f7b;
+      --teal-dark: #075d5a;
+      --blue: #2368a2;
+      --soft: #eaf5f2;
+      --gold: #d99a2b;
+      --shadow: 0 18px 50px rgba(24, 37, 38, .09);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(35, 104, 162, .10), transparent 30rem),
+        linear-gradient(180deg, #f4faf8 0, var(--paper) 34rem);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button, input { font: inherit; }
+
+    a { color: var(--teal-dark); }
+
+    .shell { width: min(1080px, calc(100% - 36px)); margin: 0 auto; }
+
+    header { padding: 28px 0 10px; }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--teal-dark);
+      font-size: .83rem;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      color: white;
+      background: var(--teal);
+    }
+
+    .hero { padding: 70px 0 52px; max-width: 850px; }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: var(--teal-dark);
+      font-weight: 750;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: .78rem;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 840px;
+      font-size: clamp(2.7rem, 7vw, 5.7rem);
+      line-height: .98;
+      letter-spacing: -.055em;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 26px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.06rem, 2vw, 1.28rem);
+    }
+
+    .principle {
+      margin-top: 26px;
+      padding-left: 18px;
+      border-left: 4px solid var(--gold);
+      color: var(--ink) !important;
+      font-weight: 650;
+    }
+
+    .assessment {
+      margin-bottom: 52px;
+      padding: clamp(22px, 5vw, 48px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.94);
+      box-shadow: var(--shadow);
+    }
+
+    .section-heading { margin-bottom: 26px; }
+    .section-heading h2 { margin: 0 0 8px; font-size: clamp(1.65rem, 4vw, 2.35rem); letter-spacing: -.03em; }
+    .section-heading p { margin: 0; color: var(--muted); }
+
+    .scale-key {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 18px 0 24px;
+      color: var(--muted);
+      font-size: .83rem;
+    }
+
+    .question {
+      padding: 25px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .question:first-of-type { border-top: 0; }
+
+    .question-title { margin: 0 0 14px; font-weight: 700; }
+    .question-number { color: var(--teal); margin-right: 8px; }
+
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .choice { position: relative; }
+    .choice input { position: absolute; opacity: 0; pointer-events: none; }
+    .choice label {
+      display: grid;
+      place-items: center;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      cursor: pointer;
+      background: var(--paper);
+      font-weight: 750;
+      transition: .16s ease;
+    }
+    .choice label:hover { border-color: var(--teal); transform: translateY(-1px); }
+    .choice input:focus-visible + label { outline: 3px solid rgba(35,104,162,.3); outline-offset: 2px; }
+    .choice input:checked + label { color: white; border-color: var(--teal); background: var(--teal); }
+
+    .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+
+    .primary, .secondary {
+      min-height: 50px;
+      padding: 0 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .primary { border: 1px solid var(--teal); color: white; background: var(--teal); }
+    .primary:hover { background: var(--teal-dark); }
+    .secondary { border: 1px solid var(--line); color: var(--ink); background: transparent; }
+    .secondary:hover { border-color: var(--teal); }
+
+    .form-message { margin: 0; color: #a23a32; font-size: .92rem; font-weight: 650; }
+
+    .result {
+      display: none;
+      margin-top: 34px;
+      padding: clamp(22px, 4vw, 34px);
+      border-radius: 18px;
+      background: var(--soft);
+    }
+
+    .result.visible { display: block; }
+    .score-line { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .score { font-size: 3rem; font-weight: 850; letter-spacing: -.06em; }
+    .score-total { color: var(--muted); }
+    .result h3 { margin: 0 0 8px; font-size: 1.55rem; }
+    .result p { margin: 0 0 18px; }
+    .result h4 { margin: 22px 0 8px; }
+    .result ul { margin: 0; padding-left: 20px; }
+    .result li + li { margin-top: 7px; }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 24px;
+      margin-bottom: 54px;
+    }
+
+    .info-card {
+      padding: 30px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+    }
+
+    .info-card h2, .info-card h3 { margin-top: 0; letter-spacing: -.025em; }
+    .info-card p:last-child { margin-bottom: 0; }
+    .info-card ul { padding-left: 20px; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 30px 0 44px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    @media (max-width: 700px) {
+      .hero { padding-top: 44px; }
+      .about-grid { grid-template-columns: 1fr; }
+      .choices { gap: 6px; }
+      .choice label { min-height: 44px; }
+      .scale-key { font-size: .75rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">H</span> Human Agency Check</div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">A practical responsible-AI assessment</p>
+      <h1>Is AI supporting human judgment or quietly replacing it?</h1>
+      <p>Evaluate an AI-enabled workflow across transparency, accountability, choice, capability, and trust. The goal is not less AI. It is more intentional AI.</p>
+      <p class="principle">AI should remove unnecessary friction without removing human agency.</p>
+    </section>
+
+    <section class="assessment" aria-labelledby="assessment-title">
+      <div class="section-heading">
+        <h2 id="assessment-title">Assess your workflow</h2>
+        <p>Score each statement from 1 to 5 based on what users actually experience today, not what the system is intended to do.</p>
+      </div>
+      <div class="scale-key" aria-hidden="true"><span>1 · Not true</span><span>5 · Consistently true</span></div>
+      <form id="agency-form" novalidate></form>
+      <div class="actions">
+        <button class="primary" type="button" id="calculate">See the assessment</button>
+        <button class="secondary" type="button" id="reset">Start over</button>
+        <p class="form-message" id="form-message" role="alert"></p>
+      </div>
+      <section class="result" id="result" aria-live="polite" tabindex="-1">
+        <div class="score-line"><span class="score" id="score"></span><span class="score-total">out of 50</span></div>
+        <h3 id="result-title"></h3>
+        <p id="result-summary"></p>
+        <h4>Start with these areas</h4>
+        <ul id="priority-list"></ul>
+        <h4>Recommended next move</h4>
+        <p id="next-move"></p>
+      </section>
+    </section>
+
+    <section class="about-grid">
+      <article class="info-card">
+        <h2>Why I made this</h2>
+        <p>I created Human Agency Check to explore a question I encounter in my own work: How do we gain the practical benefits of AI without quietly designing human judgment out of the process?</p>
+        <p>I work across digital strategy, UX/UI, web development, and operations. In each discipline, adoption succeeds when technology works with the realities of the people using it. This early framework helps product teams, operators, and business leaders notice where an AI workflow supports people and where it may create dependence, obscure accountability, or remove meaningful choice.</p>
+      </article>
+      <aside class="info-card">
+        <h3>Working definition</h3>
+        <p><strong>Human agency</strong> is a person's practical ability to understand, influence, question, correct, or reject a system's output while retaining responsibility for meaningful decisions.</p>
+        <h3>What this is not</h3>
+        <ul>
+          <li>A legal or compliance certification</li>
+          <li>A complete responsible-AI audit</li>
+          <li>A substitute for user research</li>
+        </ul>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="shell">
+    <span>Created by Tiffanie Battram Anstine</span>
+    <span>Version 0.1 · September 2026 · Built as an open conversation starter</span>
+  </footer>
+
+  <script>
+    const questions = [
+      { text: "Users understand when and where AI is involved.", area: "Transparency", action: "Make AI's role visible at the moment it affects the experience." },
+      { text: "Users know what the system can and cannot reliably do.", area: "Limitations", action: "Explain meaningful limitations in plain language near the output." },
+      { text: "A person remains accountable for consequential decisions.", area: "Accountability", action: "Name the human decision owner and define when review is required." },
+      { text: "The workflow asks users to contribute context or judgment rather than only accept an output.", area: "Participation", action: "Create a deliberate point where the user adds context or makes a choice." },
+      { text: "Users can review, correct, or reject the AI's recommendation.", area: "Control", action: "Provide a clear correction, rejection, and recovery path." },
+      { text: "The system communicates meaningful uncertainty instead of presenting every answer with equal confidence.", area: "Uncertainty", action: "Surface uncertainty and define when a user should verify the result." },
+      { text: "The workflow reduces repetitive effort without removing the work that gives the role meaning.", area: "Meaningful work", action: "Automate friction first and preserve the work that depends on human care or judgment." },
+      { text: "Users can understand why an output was produced at an appropriate level.", area: "Explainability", action: "Give users enough context to evaluate why the result makes sense." },
+      { text: "The workflow protects private or sensitive information.", area: "Privacy", action: "Clarify what data is collected, where it goes, and what should never be entered." },
+      { text: "Continued use is likely to strengthen capability rather than weaken confidence in independent judgment.", area: "Capability", action: "Add reflection or review points that keep the user actively thinking." }
+    ];
+
+    const form = document.getElementById("agency-form");
+    const message = document.getElementById("form-message");
+    const result = document.getElementById("result");
+
+    questions.forEach((question, index) => {
+      const fieldset = document.createElement("fieldset");
+      fieldset.className = "question";
+      fieldset.style.borderLeft = "0";
+      fieldset.style.borderRight = "0";
+      fieldset.style.borderBottom = "0";
+      fieldset.style.margin = "0";
+      fieldset.style.paddingLeft = "0";
+      fieldset.style.paddingRight = "0";
+
+      const legend = document.createElement("legend");
+      legend.className = "question-title";
+      legend.innerHTML = `<span class="question-number">${String(index + 1).padStart(2, "0")}</span>${question.text}`;
+      fieldset.appendChild(legend);
+
+      const choices = document.createElement("div");
+      choices.className = "choices";
+      for (let value = 1; value <= 5; value++) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "choice";
+        wrapper.innerHTML = `<input type="radio" id="q${index}-${value}" name="q${index}" value="${value}"><label for="q${index}-${value}" aria-label="${value} out of 5">${value}</label>`;
+        choices.appendChild(wrapper);
+      }
+      fieldset.appendChild(choices);
+      form.appendChild(fieldset);
+    });
+
+    document.getElementById("calculate").addEventListener("click", () => {
+      const scores = questions.map((_, index) => {
+        const selected = form.querySelector(`input[name="q${index}"]:checked`);
+        return selected ? Number(selected.value) : null;
+      });
+
+      const firstMissing = scores.indexOf(null);
+      if (firstMissing !== -1) {
+        message.textContent = `Please answer question ${firstMissing + 1} before viewing the assessment.`;
+        form.querySelector(`input[name="q${firstMissing}"]`).focus();
+        return;
+      }
+
+      message.textContent = "";
+      const total = scores.reduce((sum, value) => sum + value, 0);
+      const ranked = scores.map((score, index) => ({ score, ...questions[index] })).sort((a, b) => a.score - b.score);
+      const priorities = ranked.slice(0, 3);
+
+      let title, summary, nextMove;
+      if (total >= 41) {
+        title = "Agency-supporting";
+        summary = "This workflow appears to use AI as leverage while maintaining meaningful human understanding and control. The next step is to test whether users experience those safeguards as intended.";
+        nextMove = "Validate the three lowest-scoring areas with actual users and document the safeguards that must remain as the workflow evolves.";
+      } else if (total >= 28) {
+        title = "Needs deliberate safeguards";
+        summary = "The workflow offers practical value, but some design choices may weaken transparency, review, accountability, or user confidence.";
+        nextMove = "Choose one high-impact workflow moment and add a visible human review, correction, or context step before expanding automation.";
+      } else {
+        title = "Automation is driving the experience";
+        summary = "This workflow may be optimizing task completion at the expense of human understanding, responsibility, or meaningful choice.";
+        nextMove = "Pause further automation and map which decisions require human ownership. Redesign the workflow around those decisions first.";
+      }
+
+      document.getElementById("score").textContent = total;
+      document.getElementById("result-title").textContent = title;
+      document.getElementById("result-summary").textContent = summary;
+      document.getElementById("next-move").textContent = nextMove;
+
+      const list = document.getElementById("priority-list");
+      list.innerHTML = "";
+      priorities.forEach(item => {
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${item.area} (${item.score}/5):</strong> ${item.action}`;
+        list.appendChild(li);
+      });
+
+      result.classList.add("visible");
+      result.focus();
+    });
+
+    document.getElementById("reset").addEventListener("click", () => {
+      form.reset();
+      message.textContent = "";
+      result.classList.remove("visible");
+      document.getElementById("assessment-title").scrollIntoView({ behavior: "smooth" });
+    });
+  </script>
+</body>
+</html>
