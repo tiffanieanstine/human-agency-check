@@ -1,15 +1,7 @@
----
-title: Human Agency Check
-emoji: 🧭
-colorFrom: green
-colorTo: blue
-sdk: static
-pinned: false
----
-
 # Human Agency Check
+**[Try the live Human Agency Check](https://huggingface.co/spaces/tiffanieanstine/human-agency-check)**
 
-An early interactive framework for evaluating whether an AI-enabled workflow increases efficiency while preserving human judgment, agency, and accountability.
+An interactive framework for evaluating whether AI-enabled workflows preserve human judgment, agency, and accountability.
 
 ## The question behind the project
 
